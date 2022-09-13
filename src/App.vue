@@ -3,8 +3,8 @@
 import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { onMounted } from "vue";
 const firebaseConfig = {
-  apiKey: "AIzaSyBmIQ5_vcfRAuuQP7VuHxRwHwf_fn8zEDg",
-  authDomain: "netserve.firebaseapp.com",
+  apiKey: import.meta.env.VITE_APIKEY,
+  authDomain: import.meta.env.VITE_AUTHDOMAIN,
 }
 const t = import.meta.env.VITE_APIKEY;
 const app = initializeApp(firebaseConfig)
@@ -30,11 +30,11 @@ const googleSignIn = () => {
     console.log(errorCode)
   });
 }
-console.log(t)
+console.log(import.meta.env.VITE_APIKEY)
 onMounted(() => {
   onAuthStateChanged(auth, (user) =>{
     if(!user)googleSignIn();
-    else console.log(user.displayName)
+    else console.log(user.uid)
   })
 })
 
