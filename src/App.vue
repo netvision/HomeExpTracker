@@ -1,9 +1,43 @@
 <script setup>
-let counter = ref(0)
+  import { initializeApp } from 'firebase/app'
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { onMounted } from "vue";
+const firebaseConfig = {
+  apiKey: "AIzaSyBmIQ5_vcfRAuuQP7VuHxRwHwf_fn8zEDg",
+  authDomain: "netserve.firebaseapp.com",
+}
+const t = import.meta.env.VITE_APIKEY;
+const app = initializeApp(firebaseConfig)
+const provider = new GoogleAuthProvider();
+const auth = getAuth(app)
 
-setInterval(() => {
-  counter.value++
-}, 1000)
+const googleSignIn = () => {
+  signInWithPopup(auth, provider).then((result) => {
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    // The signed-in user info.
+    const user = result.user;
+    console.log(user);
+  }).catch((error) => {
+    // Handle Errors here.
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    // The email of the user's account used.
+    const email = error.customData.email;
+    // The AuthCredential type that was used.
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    // ...
+    console.log(errorCode)
+  });
+}
+console.log(t)
+onMounted(() => {
+  onAuthStateChanged(auth, (user) =>{
+    if(!user)googleSignIn();
+    else console.log(user.displayName)
+  })
+})
+
 </script>
 
 <template>
@@ -15,7 +49,7 @@ setInterval(() => {
           class="text-3xl font-bold leading-tight text-gray-900"
           title="click to reset a counter"
         >
-          {{ $route.meta.title }} / {{ counter }}
+          {{ $route.meta.title }} 
         </h1>
       </div>
     </header>
